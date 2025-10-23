@@ -796,6 +796,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                     var addAttachment = new TicketAttachment
                                     {
                                         TicketConcernId = ticketConcernExist.Id,
+                                        ApproverDateId = addNewDateApproveConcern.Id,
                                         Attachment = filePath,
                                         FileName = attachments.Attachment.FileName,
                                         FileSize = attachments.Attachment.Length,

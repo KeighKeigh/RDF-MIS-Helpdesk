@@ -23,7 +23,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-var connectionString = builder.Configuration.GetConnectionString("Testing");
+var connectionString = builder.Configuration.GetConnectionString("Pretest");
 builder.Services.AddDbContext<MisDbContext>(x =>
 x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(360))
     .UseSnakeCaseNamingConvention()
@@ -72,7 +72,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen( c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RDF MakeItSimple(TicketSystem) API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MIS Helpdesk(TicketSystem) API", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
