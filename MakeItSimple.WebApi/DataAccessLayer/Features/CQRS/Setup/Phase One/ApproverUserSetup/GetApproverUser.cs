@@ -46,7 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_One.Appr
                 if(!string.IsNullOrEmpty(request.Search))
                 {
                     approverUserQuery = approverUserQuery
-                        .Where(x => x.User.Fullname.ToLower().Contains(request.Search));
+                        .Where(x => x.Approver.Fullname.ToLower().Contains(request.Search));
                 }
 
                 var result = approverUserQuery.GroupBy(x => x.ApproverId)

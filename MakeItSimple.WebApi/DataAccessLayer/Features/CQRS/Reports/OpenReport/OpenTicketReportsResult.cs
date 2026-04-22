@@ -32,6 +32,7 @@
             public DateTime? StartDate { get; set; }
             public string AssigTo { get; set; }
             public Guid? AssignTo { get; set; }
+            public DateTime? RequestedAt { get; set; }
 
 
         }

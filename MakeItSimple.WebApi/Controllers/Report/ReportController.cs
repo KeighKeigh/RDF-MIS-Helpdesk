@@ -8,6 +8,7 @@ using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport.SLAReport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.FinanceReports.FinanceReport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.SADSLAReport.SADSLAReport;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.TargetDateClosingReport.TargetDateClosingReport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport.AllTicketReports;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport.TicketReports;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OnHoldReport.OnHoldTicketReport;
@@ -70,6 +71,47 @@ namespace MakeItSimple.WebApi.Controllers.Report
 
         [HttpGet("closing")]
         public async Task<IActionResult> TicketReports([FromQuery] TicketReportsQuery query)
+        {
+            try
+            {
+
+                var reports = await _mediator.Send(query);
+
+                Response.AddPaginationHeader(
+
+                reports.CurrentPage,
+                reports.PageSize,
+                reports.TotalCount,
+                reports.TotalPages,
+                reports.HasPreviousPage,
+                reports.HasNextPage
+
+                );
+
+                var result = new
+                {
+                    reports,
+                    reports.CurrentPage,
+                    reports.PageSize,
+                    reports.TotalCount,
+                    reports.TotalPages,
+                    reports.HasPreviousPage,
+                    reports.HasNextPage
+                };
+
+                var successResult = Result.Success(result);
+
+                return Ok(successResult);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+
+        }
+
+        [HttpGet("TargetDateClosingReprot")]
+        public async Task<IActionResult> TargetDateClosingReport([FromQuery] TargetDateClosingReportQuery query)
         {
             try
             {

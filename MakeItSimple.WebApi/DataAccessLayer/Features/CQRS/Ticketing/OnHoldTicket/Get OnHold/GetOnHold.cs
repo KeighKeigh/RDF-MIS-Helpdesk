@@ -136,7 +136,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OnHoldTicket.Ge
                        ChannelId = x.TicketConcern.RequestConcern.ChannelId,
                        Channel_Name = x.TicketConcern.RequestConcern.Channel.ChannelName,
                        UserId = x.TicketConcern.UserId,
-                       
+                       RequestedAt = x.TicketConcern.CreatedAt,
                        Fullname = x.TicketConcern.User.Fullname,
                        Concern_Details = x.TicketConcern.RequestConcern.Concern,
                        Reason = x.Reason,

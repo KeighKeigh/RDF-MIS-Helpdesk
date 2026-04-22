@@ -35,6 +35,7 @@
             public string Requestor { get; set; }
             public string CategoryConcern { get; set; }
             public string Notes { get; set; }
+            public DateTime? RequestedAt { get; set; }
 
         }
 

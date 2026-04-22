@@ -3,6 +3,7 @@ using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.OpenTicketConcern.GetOpenTicketSubUnit.GetOpenTicketSubUnit;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.BackJob
 {
@@ -34,6 +35,22 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         TicketConcernId = r.Id,
                         Days_Closed = EF.Functions.DateDiffDay(r.Closed_At.Value.Date,dateToday),
                         Concern = r.RequestConcern.Concern,
+                        ServiceProviderId = r.RequestConcern.ServiceProviderId,
+                        ChannelId = r.RequestConcern.ChannelId,
+                        GetBackjobCategories = r.RequestConcern.TicketCategories
+                        .Select(t => new TicketBackJobResult.GetBackjobCategory
+                        {
+                            TicketCategoryId = t.Id,
+                            CategoryId = t.CategoryId,
+                            Category_Description = t.Category.CategoryDescription,
+                        }).ToList(),
+                        GetBackjobSubCategories = r.RequestConcern.TicketSubCategories
+                        .Select(t => new TicketBackJobResult.GetBackjobSubCategory
+                        {
+                            TicketSubCategoryId = t.Id,
+                            SubCategoryId = t.SubCategoryId,
+                            SubCategory_Description = t.SubCategory.SubCategoryDescription,
+                        }).ToList(),
 
                     }).ToListAsync();
 

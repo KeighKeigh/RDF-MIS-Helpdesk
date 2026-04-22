@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.OneCharging.GetOneBusinessUnit;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.OneCharging.GetOneCharging;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.OneCharging.GetOneChargingByBusinessUnit;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.OneCharging.GetOneCompany;
 
 //using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.OneCharging.GetOneCompany;
@@ -79,6 +80,45 @@ namespace MakeItSimple.WebApi.Controllers.OneCharging
 
         [HttpGet("page_business_unit")]
         public async Task<IActionResult> GetOneBusinessUnit([FromQuery] GetOneBusinessUnitQuery query)
+        {
+            try
+            {
+
+                var onecharging = await _mediator.Send(query);
+
+                Response.AddPaginationHeader(
+
+                onecharging.CurrentPage,
+                onecharging.PageSize,
+                onecharging.TotalCount,
+                onecharging.TotalPages,
+                onecharging.HasPreviousPage,
+                onecharging.HasNextPage
+
+                );
+
+                var result = new
+                {
+                    onecharging,
+                    onecharging.CurrentPage,
+                    onecharging.PageSize,
+                    onecharging.TotalCount,
+                    onecharging.TotalPages,
+                    onecharging.HasPreviousPage,
+                    onecharging.HasNextPage
+                };
+
+                var successResult = Result.Success(result);
+                return Ok(successResult);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("page_business_unit_by_id")]
+        public async Task<IActionResult> GetOneBusinessUnitById([FromQuery] GetOneChargingByBusinessUnitQuery query)
         {
             try
             {

@@ -68,7 +68,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCrea
 
                 var result = await _context.SubCategories
                         .Include(s => s.Category)
-                        .Where(s => request.CategoryId.Contains(s.CategoryId))
+                        .Where(s => request.CategoryId.Contains(s.CategoryId) && s.IsActive == true)
                         .Select(x => new ViewMultipleCategoryResult
                         {
                             CategoryId = x.CategoryId,

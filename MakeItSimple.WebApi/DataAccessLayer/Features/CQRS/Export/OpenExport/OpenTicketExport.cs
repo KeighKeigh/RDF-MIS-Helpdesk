@@ -49,7 +49,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
                         Remarks = t.Remarks,
                         Aging_Days = EF.Functions.DateDiffDay(t.TargetDate.Value.Date, DateTime.Now.Date),
                         ServiceProvider_Id = t.RequestConcern.ServiceProviderId,
-                        ServiceProvider_Name = t.RequestConcern.ServiceProvider.ServiceProviderName
+                        ServiceProvider_Name = t.RequestConcern.ServiceProvider.ServiceProviderName,
+                        Year = t.CreatedAt.Year.ToString()
                         
 
                     }).ToListAsync(cancellationToken);
@@ -109,6 +110,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
                         Remarks = r.Remarks,
                         Aging_Days = r.Aging_Days,
                         ServiceProvider_Name = r.ServiceProvider_Name,
+                        Year = r.Year,
                         
                     }).ToList();
 
@@ -156,7 +158,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport
                     {
                         var row = worksheet.Row(index + 1);
 
-                        row.Cell(1).Value = resultOpenTicket[index - 1].TicketConcernId;
+                        row.Cell(1).Value = $"{resultOpenTicket[index - 1].Year} - {resultOpenTicket[index - 1].TicketConcernId}";
                         row.Cell(2).Value = resultOpenTicket[index - 1].Concern_Description;
                         row.Cell(3).Value = resultOpenTicket[index - 1].Requestor_Name;
                         row.Cell(4).Value = resultOpenTicket[index - 1].CompanyName;

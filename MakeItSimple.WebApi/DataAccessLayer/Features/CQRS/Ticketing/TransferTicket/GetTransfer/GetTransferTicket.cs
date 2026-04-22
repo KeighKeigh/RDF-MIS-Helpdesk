@@ -175,6 +175,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TransferTicket.
                         Reject_Remarks = x.RejectRemarks,
                         Remarks = x.Remarks,
                         Added_By = x.AddedByUser.Fullname,
+                        RequestedAt = x.TicketConcern.CreatedAt,
                         Created_At = x.CreatedAt,
                         Modified_By = x.ModifiedByUser.Fullname,
                         Updated_At = x.UpdatedAt,

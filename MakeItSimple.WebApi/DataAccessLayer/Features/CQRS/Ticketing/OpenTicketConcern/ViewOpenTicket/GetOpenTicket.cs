@@ -151,7 +151,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConce
                 if (request.Date_From is not null && request.Date_To is not null)
                 {
                     ticketConcernQuery = ticketConcernQuery
-                        .Where(x => x.TargetDate >= request.Date_From.Value && x.TargetDate <= request.Date_To.Value);
+                        .Where(x => x.CreatedAt >= request.Date_From.Value && x.CreatedAt <= request.Date_To.Value);
                 }
 
 

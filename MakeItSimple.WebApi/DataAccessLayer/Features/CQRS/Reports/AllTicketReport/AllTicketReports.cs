@@ -74,6 +74,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         AssignTo = o.RequestConcern.AssignToUser.Fullname,
                         ServiceProviderName = o.RequestConcern.ServiceProvider.ServiceProviderName,
                         Resolution = o.RequestConcern.Resolution,
+                        RequestedAt = o.CreatedAt,
                         
                         
                         
@@ -126,7 +127,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         StartDate = ct.TicketConcern.DateApprovedAt.Value.ToString("MM/dd/yyyy hh:tt:mm"),
                         ServiceProvider = ct.TicketConcern.RequestConcern.ServiceProviderId.Value,
                         AssignTo = ct.TransferToUser.Fullname,
-                        ServiceProviderName = ct.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName
+                        ServiceProviderName = ct.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName,
+                        RequestedAt = ct.TicketConcern.CreatedAt,
                     }).ToListAsync();
 
                 var onHoldTicketQuery = await _context.TicketOnHolds
@@ -175,7 +177,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         StartDate = ct.TicketConcern.DateApprovedAt.Value.ToString("MM/dd/yyyy hh:tt:mm"),
                         ServiceProvider = ct.TicketConcern.RequestConcern.ServiceProviderId.Value,
                         AssignTo = ct.TicketConcern.RequestConcern.AssignToUser.Fullname,
-                        ServiceProviderName = ct.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName
+                        ServiceProviderName = ct.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName,
+                        RequestedAt = ct.TicketConcern.CreatedAt
 
                     }).ToListAsync();
 
@@ -233,6 +236,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         Resolution = ct.TicketConcern.RequestConcern.Resolution,
                         Technicians = string.Join(", ", ct.ticketTechnicians.Select(t => t.TechnicianByUser.Fullname)),
                         CategoryConcern = ct.TicketConcern.RequestConcern.CategoryConcernName,
+                        RequestedAt = ct.TicketConcern.CreatedAt,
 
                     }).ToListAsync(); 
 
@@ -481,6 +485,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport
                         Technicians = r.Technicians,
                         CategoryConcern = r.CategoryConcern,
                         ForClosedDate = r.ForClosedDate,
+                        RequestedAt = r.RequestedAt,
                        
 
                     }).ToList();

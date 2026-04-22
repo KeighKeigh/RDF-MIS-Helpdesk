@@ -17,7 +17,7 @@
             public string ServiceProviderName { get; set;}
             public int? ChannelId { get; set; }
             public string ChannelName { get; set; }
-            
+            public DateTime? RequestedAt { get; set; }
 
         }
     }

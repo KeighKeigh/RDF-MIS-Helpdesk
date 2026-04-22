@@ -8,7 +8,7 @@
             public int? RequestConcernId { get; set; }
             public string Concern { get; set; }
             public string Resolution { get; set; }
-
+            public DateTime RequestedDate { get; set; }
             public int? CompanyId { get; set; }
             public string Company_Code { get; set; }
             public string Company_Name { get; set; }

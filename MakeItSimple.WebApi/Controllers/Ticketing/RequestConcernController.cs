@@ -1,6 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
 using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.Extension;
+using MakeItSimple.WebApi.Controllers.Authentication;
+
 //using MakeItSimple.WebApi.Common.SignalR;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AddRequest;
@@ -11,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AddCommentNotificationValidator;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AddRequest.UpdateRequestConcern;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AddRequestConcern.AddConcern;
+
 //using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AddTicketComment;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.AssignAndApprovalTicket.AssignAndApprovalConcern;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.TicketCreating.CherryPicking.TakeCherryPicking;
@@ -77,6 +81,35 @@ namespace MakeItSimple.WebApi.Controllers.Ticketing
                 return Conflict(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [ApiKeyAuth]
+        [HttpPost("add-concern")]
+        public async Task<IActionResult> AddConcern([FromForm] AddConcernCommand command)
+        {
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+
+                    command.Modified_By = command.UserId;
+                    command.Added_By = command.UserId;
+
+                var result = await _mediator.Send(command);
+                if (result.IsFailure)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(result);
+                }
+                await transaction.CommitAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return Conflict(ex.Message);
+            }
+        }
+
 
 
         [HttpGet("backjob")]

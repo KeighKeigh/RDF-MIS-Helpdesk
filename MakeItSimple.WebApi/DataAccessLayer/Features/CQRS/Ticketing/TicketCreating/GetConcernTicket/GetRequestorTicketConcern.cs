@@ -223,7 +223,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         Channel_Name = g.RequestConcern.Channel.ChannelName,
                         OneCharginCode = g.RequestConcern.OneChargingCode,
                         OneChargingName = g.RequestConcern.OneChargingName,
-
+                        RequestedDate = g.CreatedAt,
                         TargetDate = g.RequestConcern.TargetDate,
                         AssignTo = g.RequestConcern.AssignTo,
                         AssignToName = _context.Users.Where(u => u.Id == g.RequestConcern.AssignTo).Select(u => u.Fullname).FirstOrDefault(),

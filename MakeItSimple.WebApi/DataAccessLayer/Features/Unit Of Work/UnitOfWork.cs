@@ -1,18 +1,23 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.OneRdf;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Phase_Two;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Pms_Transaction;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Setup.Phase_One;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Setup.Phase_Two;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Setup.Phase_Two.PMS;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository.User_Management;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.OneRdf;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Phase_Two;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_One;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_Two;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Setup.Phase_Two.PMS;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Features.Repository_Modules.Repository_Interface.User_Management;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository.Pms_Form;
 using MakeItSimple.WebApi.DataAccessLayer.Repository_Modules.Repository_Interface.IPms_Form;
+using MakeItSimple.WebApi.Models.OneCharging;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
 {
@@ -41,6 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
             RequestTicket = new RequestTicketRepository(context, contentType);
             ClosingTicket = new ClosingTicketRepository(context);
             ApproverDate = new ApproverDateRepository(context);
+            PendingRequests = new PendingRequestRepository(context);
 
 
             PmsForm = new PmsFormRepository(context);
@@ -48,6 +54,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
             PmsQuestion = new PmsQuestionRepository(context);
             PmsApprover = new PmsApproverRepository(context);
             Pms = new PmsRepository(context,contentType);
+
+            PmsValidate = new PmsValidationRepository(context);
+            PmsCreate = new PmsCreatingRepository(context);
+            PmsGet = new PmsGetRepository(context);
 
         }
 
@@ -67,6 +77,13 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work
         public IClosingRepository ClosingTicket { get; private set;}
         public IApproverDateRepository ApproverDate { get; private set; }
 
+        //OneRdf
+        public IPendingRequestRepository PendingRequests { get; private set; }
+
+        //Pms k
+        public IPmsCreatingRepository PmsCreate { get; private set; }
+        public IPmsGetRepository PmsGet { get; private set; }
+        public IPmsValidationRepository PmsValidate { get; private set; }
 
         //Pms Transaction
 

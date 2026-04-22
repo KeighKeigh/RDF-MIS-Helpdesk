@@ -16,6 +16,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_One.ApproverUserSetup
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_One.ServiceProviderSetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two.Pms_Form_Setup;
+using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Phase_Two.PmsConfiguration;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.Pivot;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.QuestionCategorySetup;
 using MakeItSimple.WebApi.DataAccessLayer.Data.Setup.ReceiverSetup;
@@ -26,6 +27,7 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Data.UserManagement;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.OneCharging;
+using MakeItSimple.WebApi.Models.Phase_Two.PMS;
 using MakeItSimple.WebApi.Models.Setup.AccountTitleSetup;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
@@ -91,6 +93,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         public virtual DbSet<OneUnit> OneUnits { get; set; }
         public virtual DbSet<ApproverUser> ApproverUsers { get; set; }
         public virtual DbSet<CategoryConcern> CategoryConcerns { get; set; }
+        public virtual DbSet<PendingRequest> PendingRequests { get; set; }
 
 
 
@@ -114,8 +117,17 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
         public virtual DbSet<TicketSubCategory> TicketSubCategories {  get; set; } 
         public virtual DbSet<TicketTechnician> TicketTechnicians { get; set; }
         public virtual DbSet<ApproverDate> ApproverDates { get; set; }
-        //Pms Setup
+        //Pms Setup K
+        public virtual DbSet<PmsPhaseTwo> Pmss { get; set; }
+        public virtual DbSet<PmsPhaseTwoAnswer> PmsAnswers { get; set; }
+        public virtual DbSet<PmsChecklistManagement> PmsChecklistManagements { get; set; }
+        //public virtual DbSet<PmsPhaseTwoSection> PmsSections { get; set; }
+        public virtual DbSet<PmsSectionQuestion> PmsSectionQuestions { get; set; }
+        public virtual DbSet<PmsPhaseTwoType> PmsType { get; set; }
+        public virtual DbSet<Sites> Sites { get; set; }
+        public virtual DbSet<SitePivot> SitesPivot { get; set; }
 
+        //OldPms
         public virtual DbSet<PmsForm> PmsForms { get; set; }
         public virtual DbSet<PmsQuestionaireModule> PmsQuestionaireModules { get; set; }
         public virtual DbSet<PmsQuestionaire> PmsQuestionaires { get; set; }
@@ -179,8 +191,16 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Data.DataContext
             modelBuilder.ApplyConfiguration(new ApproverUserConfiguration());
             //modelBuilder.ApplyConfiguration(new OneChargingMISConfiguration());
 
-            //Phase 2
+            //Phase 2 k
+            modelBuilder.ApplyConfiguration(new PmsPhaseTwoAnswerConfiguration());
+            modelBuilder.ApplyConfiguration(new PmsPhaseTwoConfiguration());
+            //modelBuilder.ApplyConfiguration(new PmsPhaseTwoQuestionConfiguration());
+            //modelBuilder.ApplyConfiguration(new PmsPhaseTwoSectionConfiguration());
+            modelBuilder.ApplyConfiguration(new PmsPhaseTwoSectionQuestionConfiguration());
+            modelBuilder.ApplyConfiguration(new PmsPhaseTwoTypeConfiguration());
 
+
+            //Phase 2 old
             modelBuilder.ApplyConfiguration(new PmsFormConfiguration());
             modelBuilder.ApplyConfiguration(new PmsQuestionaireModuleConfiguration());
             modelBuilder.ApplyConfiguration(new PmsQuestionaireConfiguration());

@@ -52,7 +52,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_One.Cate
                     Id = x.Id,
                     categoryConcern = x.CategoryConcernName,
                     Is_Active = x.IsActive,
-                });
+                }).OrderBy(x => x.categoryConcern != "N/A").ThenBy(x => x.Id);
 
                 return await PagedList<GetCategoryConcernResult>.CreateAsync(result, request.PageNumber, request.PageSize);
             }

@@ -67,7 +67,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                         Requestor = x.TicketConcern.RequestorByUser.Fullname,
                         CategoryConcern = x.CategoryConcernName,
                         Department = x.TicketConcern.RequestConcern.OneChargingMIS.department_name,
-                        Notes =x.Notes
+                        Notes =x.Notes,
+                        RequestedAt = x.TicketConcern.CreatedAt,
+                        
 
                     });
 
@@ -126,6 +128,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.CloseReport
                     CategoryConcern = x.CategoryConcern,
                     ForClosedDate = x.ForClosedDate,
                     Notes = x.Notes,
+                    RequestedAt = x.RequestedAt,
 
 
 

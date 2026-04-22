@@ -1,6 +1,7 @@
 ﻿using MakeItSimple.WebApi.Common;
 using MakeItSimple.WebApi.Common.ConstantString;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
+using MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketHistories.Requests;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -410,38 +411,38 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 }
 
 
-                if (receiverPermissionList.Any(x => x.Contains(request.Role)))
-                {
+                //if (receiverPermissionList.Any(x => x.Contains(request.Role)))
+                //{
 
-                    if (requestConcernsQuery.Any())
-                    {
-                        var listOfRequest = requestConcernsQuery
-                            .Select(x => x.User.BusinessUnitId)
-                            .ToList();
+                //    if (requestConcernsQuery.Any())
+                //    {
+                //        var listOfRequest = requestConcernsQuery
+                //            .Select(x => x.User.BusinessUnitId)
+                //            .ToList();
 
-                        var receiverList = await _context.Receivers
-                            .AsNoTrackingWithIdentityResolution()
-                            .Include(x => x.BusinessUnit)
-                            .AsSplitQuery()
-                            .Where(x => x.IsActive == true)
-                            .Where(x => listOfRequest
-                            .Contains(x.BusinessUnitId.Value))
-                            .Select(x => x.BusinessUnitId)
-                            .ToListAsync();
+                //        var receiverList = await _context.Receivers
+                //            .AsNoTrackingWithIdentityResolution()
+                //            .Include(x => x.BusinessUnit)
+                //            .AsSplitQuery()
+                //            .Where(x => x.IsActive == true)
+                //            .Where(x => listOfRequest
+                //            .Contains(x.BusinessUnitId.Value))
+                //            .Select(x => x.BusinessUnitId)
+                //            .ToListAsync();
 
-                        var receiverConcernsQuery = requestConcernsQuery
-                                .Where(x => receiverList.Contains(x.User.BusinessUnitId))
-                                .Select(x => x.Id)
-                                .ToList();
+                //        var receiverConcernsQuery = requestConcernsQuery
+                //                .Where(x => receiverList.Contains(x.User.BusinessUnitId))
+                //                .Select(x => x.Id)
+                //                .ToList();
 
-                        receiverForApprovalNotif = await _context.TicketConcerns
-                           .AsNoTrackingWithIdentityResolution()
-                           .Where(x => receiverConcernsQuery.Contains(x.RequestConcernId.Value) && x.IsApprove == false)
-                           .CountAsync();
+                //        receiverForApprovalNotif = await _context.TicketConcerns
+                //           .AsNoTrackingWithIdentityResolution()
+                //           .Where(x => receiverConcernsQuery.Contains(x.RequestConcernId.Value) && x.IsApprove == false)
+                //           .CountAsync();
 
-                    }
+                //    }
 
-                }
+                //}
 
                 var notification = new TicketingNotifResult
                 {
@@ -475,7 +476,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                 var ticketConcernList = await _context.TicketConcerns
                     .AsNoTrackingWithIdentityResolution()
                     .Where(x => x.RequestConcern.Is_Confirm == null
-                    && x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm)
+                    && x.RequestConcern.ConcernStatus == TicketingConString.NotConfirm && x.AssignTo == request.UserId)
                     .Select(x => new
                     {
                         x.Id,
@@ -522,33 +523,39 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketingNotifi
                     //if (totalHours >= 24 && todayWeek != DayOfWeek.Saturday && todayWeek != DayOfWeek.Sunday)
                     if(now >= confirmationDeadline)
                     {
-                        var requestConcern =  requestConcernsQuery
-                            .FirstOrDefault(x => x.Id == confirm.RequestConcernId);
+                        var requestConcern = await _context.RequestConcerns
+                            .FirstOrDefaultAsync(x => x.Id == confirm.RequestConcernId);
 
                         requestConcern.Is_Confirm = true;
                         requestConcern.Confirm_At = DateTime.Today;
                         requestConcern.ConcernStatus = TicketingConString.Done;
 
                         var ticketHistory = await _context.TicketHistories
-                            .AsNoTracking()
                             .Where(x => x.TicketConcernId == confirm.Id)
                             .Where(x => x.IsApprove == null && x.Request.Contains(TicketingConString.NotConfirm))
                             .FirstOrDefaultAsync();
 
                         if (ticketHistory != null)
                         {
-                            ticketHistory.TicketConcernId = confirm.Id;
+                            //ticketHistory.TicketConcernId = confirm.Id;
                             ticketHistory.TransactedBy = null;
                             ticketHistory.TransactionDate = DateTime.Now;
                             ticketHistory.Request = "Auto Confirm";
                             ticketHistory.Status = "Ticket has been auto confirmed by the system";
                         }
 
+                        //var updateHistory = new UpdateTicketHistoryForConfirmation
+                        //{
+                        //    TicketConcernId = confirm.Id,
+                        //};
+
+                        //await _mediator.Send(updateHistory);
+
                         var addNewTicketTransactionNotification = new TicketTransactionNotification
                         {
 
                             Message = $"Ticket number {confirm.Id} has been closed",
-                            AddedBy = request.UserId,
+                            AddedBy = null,
                             Created_At = DateTime.Now,
                             ReceiveBy = confirm.UserId.Value,
                             Modules = PathConString.IssueHandlerConcerns,

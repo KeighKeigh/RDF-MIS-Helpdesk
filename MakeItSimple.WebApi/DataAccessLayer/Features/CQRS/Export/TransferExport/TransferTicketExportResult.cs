@@ -24,6 +24,8 @@
             public string ChannnelName { get; set; }
             public int? ServiceProviderId { get; set; }
             public string ServiceProviderName { get; set;}
+            public string TransferredDate { get; set; }
+            public string Year { get; set; }
         }
     }
 }

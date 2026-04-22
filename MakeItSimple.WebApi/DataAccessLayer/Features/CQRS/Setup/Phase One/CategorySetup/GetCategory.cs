@@ -17,7 +17,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup
             public string Category_Description { get; set; }
             public string Added_By { get; set; }
             public DateTime Created_At { get; set; }
-
+            public int? CategoryId { get; set; }
             public string Modified_By { get; set; }
             public DateTime? Updated_At { get; set; }
 
@@ -80,6 +80,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.CategorySetup
                     Created_At = x.CreatedAt,
                     Modified_By = x.ModifiedByUser.Fullname,
                     Is_Active = x.IsActive,
+                    CategoryId = x.Id,
                     subcategories = x.SubCategories.Where(x => x.IsActive == true).Where(x => x.IsActive == true).Select(x => new GetCategoryResult.Subcategory
                     {
                         SubCategoryId = x.Id,

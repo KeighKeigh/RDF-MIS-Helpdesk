@@ -18,12 +18,13 @@ using Microsoft.Data.SqlClient;
 //using MakeItSimple.WebApi.Common.Caching;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
+using MakeItSimple.WebApi.Hubs;
 //using MakeItSimple.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-var connectionString = builder.Configuration.GetConnectionString("Pretest");
+var connectionString = builder.Configuration.GetConnectionString("Testing");
 builder.Services.AddDbContext<MisDbContext>(x =>
 x.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(360))
     .UseSnakeCaseNamingConvention()
@@ -143,7 +144,7 @@ builder.Services.AddAuthentication(authOptions =>
 //builder.Services.AddMemoryCache();
 //builder.Services.AddLazyCache();
 builder.Services.AddHttpClient();
-//builder.Services.AddSignalR();
+builder.Services.AddSignalR();
 
 
 
@@ -155,17 +156,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: clientPermission, policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.SetIsOriginAllowed(_ => true)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
+
+
 });
 
 //kestrell
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(5000); // HTTP
-    serverOptions.ListenAnyIP(5001, listenOptions => listenOptions.UseHttps()); // HTTPS
+    serverOptions.ListenAnyIP(5002); // HTTP
+    serverOptions.ListenAnyIP(5003, listenOptions => listenOptions.UseHttps()); // HTTPS
 });
 
 
@@ -186,7 +190,7 @@ app.UseRouting();
 app.UseHttpsRedirection();
 app.UseCors(clientPermission);
 //app.MapHub<CacheHub>("/cacheNotificationHub");
-
+app.MapHub<TicketHub>("/ticketHub");
 app.UseAuthentication();
 app.UseAuthorization();
 //app.UseWebSockets();

@@ -30,7 +30,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OnHoldExport
                 var query = await _context.TicketOnHolds
                     .AsNoTrackingWithIdentityResolution()
                     .AsSplitQuery()
-                    .Where(r => r.CreatedAt.Date >= request.Date_From.Value.Date && r.CreatedAt.Date <= request.Date_To.Value.Date)
+                    .Where(r => r.IsHold == true && r.CreatedAt.Date >= request.Date_From.Value.Date && r.CreatedAt.Date <= request.Date_To.Value.Date)
                     .Select(r => new OnHoldTicketExportResult
                     {
                         UserId = r.AddedBy,
@@ -47,7 +47,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OnHoldExport
                         ServiceProviderId = r.TicketConcern.RequestConcern.ServiceProviderId,
                         ServiceProviderName = r.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName,
                         ChannelId = r.TicketConcern.RequestConcern.ChannelId,
-                        ChannelName = r.TicketConcern.RequestConcern.Channel.ChannelName
+                        ChannelName = r.TicketConcern.RequestConcern.Channel.ChannelName,
+                        Year = r.TicketConcern.CreatedAt.Year.ToString(),
 
 
                     }).ToListAsync();
@@ -93,6 +94,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OnHoldExport
                         ServiceProviderName = r.ServiceProviderName,
                         ChannelId = r.ChannelId,
                         ChannelName = r.ChannelName,
+                        Year = r.Year,
                     }).ToList();
 
                 using (var workbook = new XLWorkbook())
@@ -129,7 +131,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.OnHoldExport
                     {
                         var row = worksheet.Row(index + 1);
 
-                        row.Cell(1).Value = finalQuery[index - 1].TicketConcernId;
+                        row.Cell(1).Value = $"{finalQuery[index - 1].Year} - {finalQuery[index - 1].TicketConcernId}"; 
                         row.Cell(2).Value = finalQuery[index - 1].Concerns;
                         row.Cell(3).Value = finalQuery[index - 1].Reason;
                         row.Cell(4).Value = finalQuery[index - 1].Added_By;

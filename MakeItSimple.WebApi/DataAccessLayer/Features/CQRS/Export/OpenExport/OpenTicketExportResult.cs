@@ -28,7 +28,8 @@
             public DateTime? Updated_At { get; set; }
             public string Remarks { get; set; }
             public int Aging_Days { get; set; }
-           
+            public string Year { get; set; }
+
 
         }
     }

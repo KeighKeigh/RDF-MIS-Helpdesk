@@ -25,6 +25,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
         public record class AllTicketExportResult
         {
             public string TicketConcernId { get; set; }
+            public string Year { get; set; }
             public string Request_Type { get; set; }
             public string BackJobId { get; set; }
             public string Requestor_Name { get; set; }
@@ -102,7 +103,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                     {
 
                         TicketConcernId = o.Id.ToString(),
-
+                        Year = o.CreatedAt.Year.ToString(),
                         Request_Type = o.RequestConcern.RequestType,
                         BackJobId = o.RequestConcern.BackJobId.ToString(),
                         Requestor_Name = o.RequestorByUser.Fullname,
@@ -127,11 +128,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                           .Select(x => x.Category.CategoryDescription)),
                         TicketSubCategoryDescriptions = string.Join(", ", o.RequestConcern.TicketSubCategories
                            .Select(x => x.SubCategory.SubCategoryDescription)),
-                        Date_Needed = o.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy HH:mm"),
+                        Date_Needed = o.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy"),
                         Contact_Number = o.RequestConcern.ContactNumber,
                         Notes = o.RequestConcern.Notes,
                         Transaction_Date = o.CreatedAt.ToString("MM/dd/yyyy HH:mm"),
-                        Target_Date = o.TargetDate.Value.Date.ToString("MM/dd/yyyy "),
+                        Target_Date = o.TargetDate.Value.Date.ToString("MM/dd/yyyy"),
                         Ticket_Status = "Open",
                         Remarks = o.Remarks,
                         Aging_Days = EF.Functions.DateDiffDay(o.DateApprovedAt.Value.Date, DateTime.Now.Date),
@@ -159,6 +160,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                     .Select(ct => new AllTicketExportResult
                     {
                         TicketConcernId = ct.TicketConcernId.ToString(),
+                        Year = ct.TicketConcern.CreatedAt.Year.ToString(),
                         Request_Type = ct.TicketConcern.RequestConcern.RequestType,
                         BackJobId = ct.TicketConcern.RequestConcern.BackJobId.ToString(),
                         Requestor_Name = ct.TicketConcern.RequestorByUser.Fullname,
@@ -183,7 +185,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                           .Select(x => x.Category.CategoryDescription)),
                         TicketSubCategoryDescriptions = string.Join(", ", ct.TicketConcern.RequestConcern.TicketSubCategories
                                .Select(x => x.SubCategory.SubCategoryDescription)),
-                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy HH:mm"),
+                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy"),
                         Contact_Number = ct.TicketConcern.RequestConcern.ContactNumber,
                         Notes = ct.TicketConcern.RequestConcern.Notes,
                         Transaction_Date = ct.TransferAt.Value.ToString("MM/dd/yyyy HH:mm"),
@@ -212,6 +214,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                     .Select(ct => new AllTicketExportResult
                     {
                         TicketConcernId = ct.TicketConcernId.ToString(),
+                        Year = ct.TicketConcern.CreatedAt.Year.ToString(),
                         Request_Type = ct.TicketConcern.RequestConcern.RequestType,
                         BackJobId = ct.TicketConcern.RequestConcern.BackJobId.ToString(),
                         Requestor_Name = ct.TicketConcern.RequestorByUser.Fullname,
@@ -236,7 +239,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                           .Select(x => x.Category.CategoryDescription)),
                         TicketSubCategoryDescriptions = string.Join(", ", ct.TicketConcern.RequestConcern.TicketSubCategories
                                .Select(x => x.SubCategory.SubCategoryDescription)),
-                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy HH:mm"),
+                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy"),
                         Contact_Number = ct.TicketConcern.RequestConcern.ContactNumber,
                         Notes = ct.TicketConcern.RequestConcern.Notes,
                         Transaction_Date = ct.CreatedAt.ToString("MM/dd/yyyy HH:mm"),
@@ -266,6 +269,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                     .Select(ct => new AllTicketExportResult
                     {
                         TicketConcernId = ct.TicketConcernId.ToString(),
+                        Year = ct.TicketConcern.CreatedAt.Year.ToString(),
                         Request_Type = ct.TicketConcern.RequestConcern.RequestType,
                         BackJobId = ct.TicketConcern.RequestConcern.BackJobId.ToString(),
                         Requestor_Name = ct.TicketConcern.RequestorByUser.Fullname,
@@ -290,7 +294,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                           .Select(x => x.Category.CategoryDescription)),
                         TicketSubCategoryDescriptions = string.Join(", ", ct.TicketConcern.RequestConcern.TicketSubCategories
                                .Select(x => x.SubCategory.SubCategoryDescription)),
-                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy HH:mm"),
+                        Date_Needed = ct.TicketConcern.RequestConcern.DateNeeded.Value.ToString("MM/dd/yyyy"),
                         Contact_Number = ct.TicketConcern.RequestConcern.ContactNumber,
                         Notes = ct.Notes,
                         Transaction_Date = ct.ClosingAt.Value.ToString("MM/dd/yyyy HH:mm"),
@@ -348,6 +352,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                     .Select(r => new AllTicketExportResult
                     {
                         TicketConcernId = r.TicketConcernId,
+                        Year = r.Year,
                         Request_Type = r.Request_Type,
                         BackJobId = r.BackJobId,
                         Requestor_Name = r.Requestor_Name,
@@ -472,6 +477,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                         "Date Started",
                         "Date For Closed",
                         "Date Finished",
+                        "Target Date",
                         "Request ID",
                         "Customer Satisfactionn",
                         "Comment / Suggestions"
@@ -530,9 +536,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketExpo
                         row.Cell(30).Value = results[index - 1].DateStarted;
                         row.Cell(31).Value = results[index - 1].ForClosingDate;
                         row.Cell(32).Value = results[index - 1].CompletedTime;
-                        row.Cell(33).Value = results[index - 1].TicketConcernId;
-                        //row.Cell(34).Value = results[index - 1].Severity;
-                        //row.Cell(35).Value = results[index - 1].CreatedTime;
+                        row.Cell(33).Value = results[index - 1].Target_Date;
+                        row.Cell(34).Value = $"{results[index - 1].Year} - {results[index - 1].TicketConcernId}";
+                        //row.Cell(35).Value = results[index - 1].Severity;
+                        //row.Cell(36).Value = results[index - 1].CreatedTime;
 
 
 

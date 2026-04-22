@@ -9,6 +9,8 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.P
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Update_Pms_Question.UpdatePmsQuestion;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Form_Setup.Update_Pms_Form_Status.UpdatePmsFormStatus;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Setup.Phase_Two.Pms_Questionaire_Setup.Update_Pms_Question_Status.UpdatePmsQuestionStatus;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.PMS.PMS_Section_Questions.AddSectionQuestion;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.PMS.PMS_Section_Questions.GetSectionQuestion;
 
 
 
@@ -17,7 +19,7 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
     [Route("api/pms-question")]
     [ApiController]
     public class PmsQuestionController : ControllerBase
-    {                                          
+    {
 
         private readonly IMediator mediator;
         private readonly MisDbContext context;
@@ -27,8 +29,8 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
             this.mediator = mediator;
             this.context = context;
         }
-        [HttpPost("create")]
-        public async Task<IActionResult> CreatePmsQuestion([FromBody] CreatePmsQuestionCommand command)
+        [HttpPost()]
+        public async Task<IActionResult> CreatePmsQuestion([FromBody] AddSectionQuestionCommand command)
         {
 
             using var transaction = await context.Database.BeginTransactionAsync();
@@ -37,7 +39,7 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
 
                 if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
                 {
-                    command.Added_By = userId;
+                    command.AddedBy = userId;
                 }
                 var result = await mediator.Send(command);
 
@@ -58,8 +60,8 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
             }
         }
 
-        [HttpGet("page")]
-        public async Task<IActionResult> GetPmsQuestion([FromQuery] GetPmsQuestionQuery query)
+        [HttpGet()]
+        public async Task<IActionResult> GetPmsQuestion([FromQuery] GetSectionQuestionQuery query)
         {
             try
             {
@@ -96,50 +98,6 @@ namespace MakeItSimple.WebApi.Controllers.Setup.Phase_two.Pms_Question_Controlle
             }
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdatePmsQuestion([FromRoute]int id, [FromBody] UpdatePmsQuestionCommand command)
-        {
-            try
-            {
-                command.Id = id;
-
-                if (User.Identity is ClaimsIdentity identity && Guid.TryParse(identity.FindFirst("id")?.Value, out var userId))
-                {
-                    command.Modified_By = userId;
-                }
-
-                var result = await mediator.Send(command);
-
-                return result.IsFailure ? BadRequest(result) : Ok(result);
-
-            }
-            catch (Exception ex)
-            {
-                return Conflict(ex.Message);
-            }
-
-        }
-
-        [HttpPatch("archived/{id}")]
-        public async Task<IActionResult> UpdatePmsQuestionStatus([FromRoute] int id)
-        {
-            try
-            {
-                var command = new UpdatePmsQuestionStatusCommand
-                {
-                    Id = id
-                };
-
-                var result = await mediator.Send(command);
-
-                return result.IsFailure ? BadRequest(result) : Ok(result);
-
-            }
-            catch (Exception ex)
-            {
-                return Conflict(ex.Message);
-            }
-        }
 
     }
 }

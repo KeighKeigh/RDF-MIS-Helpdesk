@@ -47,6 +47,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.FinanceRepor
             public int? ServiceProviderId { get; set; }
             public int? ChannelId { get; set; }
             public Guid? IssueHandler { get; set; }
+            public DateTime? RequestedAt { get; set; }
         }
 
 
@@ -91,7 +92,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.FinanceRepor
                         Month = x.TicketConcern.Closed_At.Value.Month,
                         ServiceProviderId = x.TicketConcern.RequestConcern.ServiceProviderId,
                         ChannelId = x.TicketConcern.RequestConcern.ChannelId,
-                        IssueHandler = x.TicketConcern.AssignTo
+                        IssueHandler = x.TicketConcern.AssignTo,
+                        RequestedAt = x.TicketConcern.CreatedAt
                     });
 
                 if (request.ServiceProvider is not null)
@@ -140,7 +142,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.FinanceRepor
                     UnitName = x.UnitName,
                     SubUnitCode = x.SubUnitCode,
                     SubUnitName = x.SubUnitName,
-                    Month = x.Month
+                    Month = x.Month,
+                    RequestedAt = x.RequestedAt
                 }).OrderBy(x => x.TicketNumber);
 
 

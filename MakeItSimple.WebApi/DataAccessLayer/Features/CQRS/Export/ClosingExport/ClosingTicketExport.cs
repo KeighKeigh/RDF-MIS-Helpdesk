@@ -35,6 +35,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                     {
                         Year = x.TicketConcern.TargetDate.Value.Year.ToString(),
                         Month = x.TicketConcern.TargetDate.Value.Month.ToString(),
+                        RequestedYear = x.TicketConcern.CreatedAt.Year.ToString(),
                         Personnel = x.TicketConcern.User.Fullname,
                         Ticket_Number = x.TicketConcernId,
                         Description = x.TicketConcern.RequestConcern.Concern,
@@ -64,7 +65,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         //Technician3 = x.ticketTechnicians.Select(t => t.TechnicianByUser.Fullname).Skip(2).Take(1).FirstOrDefault(),
 
                         //Requestor = x.TicketConcern.RequestorByUser.Fullname,
-                        //CategoryConcern = x.CategoryConcernName,
+                        CategoryConcern = x.CategoryConcernName,
                         //Department = x.TicketConcern.RequestConcern.OneChargingMIS.department_name,
                         Notes =x.Notes
 
@@ -131,6 +132,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         "Description",
                         "Category",
                         "Sub Category",
+                        "Concern Category",
                         "Requested Date",
                         "Open Date",
                         "Target Date",
@@ -166,24 +168,24 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
                         row.Cell(3).Value = closing[index - 1].Start_Date;
                         row.Cell(4).Value = closing[index - 1].End_Date;
                         row.Cell(5).Value = closing[index - 1].Personnel;
-                        row.Cell(6).Value = closing[index - 1].Ticket_Number;
+                        row.Cell(6).Value = $"{closing[index - 1].RequestedYear} - {closing[index - 1].Ticket_Number}";
                         row.Cell(7).Value = closing[index - 1].Description;
                         row.Cell(8).Value = closing[index - 1].Category;
                         row.Cell(9).Value = closing[index - 1].SubCategory;
-                        row.Cell(10).Value = closing[index - 1].CreatedAt;
-                        row.Cell(11).Value = closing[index - 1].OpenDate;
-                        row.Cell(12).Value = closing[index - 1].Target_Date;
-                        row.Cell(13).Value = closing[index - 1].ForClosedDate;
-                        row.Cell(14).Value = closing[index - 1].Actual;
-                        row.Cell(15).Value = closing[index - 1].ConfirmedAt;
-                        row.Cell(16).Value = closing[index - 1].Varience;
-                        row.Cell(17).Value = closing[index - 1].Efficeincy;
-                        row.Cell(18).Value = closing[index - 1].Remarks;
+                        row.Cell(10).Value = closing[index - 1].CategoryConcern;
+                        row.Cell(11).Value = closing[index - 1].CreatedAt;
+                        row.Cell(12).Value = closing[index - 1].OpenDate;
+                        row.Cell(13).Value = closing[index - 1].Target_Date;
+                        row.Cell(14).Value = closing[index - 1].ForClosedDate;
+                        row.Cell(15).Value = closing[index - 1].Actual;
+                        row.Cell(16).Value = closing[index - 1].ConfirmedAt;
+                        row.Cell(17).Value = closing[index - 1].Varience;
+                        row.Cell(18).Value = closing[index - 1].Efficeincy;
                         row.Cell(19).Value = closing[index - 1].Remarks;
                         row.Cell(20).Value = closing[index - 1].ChannelName;
                         row.Cell(21).Value = closing[index - 1].ServiceProviderName;
 
-                        
+
 
 
                     }

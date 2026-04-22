@@ -3,6 +3,7 @@ using MakeItSimple.WebApi.Common.Pagination;
 using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport.SLATicketExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Reports.AllTicketReport.AllTicketReports;
 
 namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
@@ -36,16 +37,30 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
             public string RequestType { get; set; }
             public string Status { get; set; }
             public string Rating { get; set; }
-            
+
             public string Category { get; set; }
-            
+            public string Remarks { get; set; }
             public string SubCategory { get; set; }
             public string Position { get; set; }
             public int? ServiceProviderId { get; set; }
             public int? ChannelId { get; set; }
             public Guid? AssignTo { get; set; }
+            public DateTime? RequestedAt { get; set; }
+
+            public string CompanyCode { get; set; }
+            public string CompanyName { get; set; }
+            public string LocationCode { get; set; }
+            public string LocationName { get; set; }
+            public string DeparmentCode { get; set; }
+            public string DepartmentName { get; set; }
+            public string BusinessUnitCode { get; set; }
+            public string BusinessUnitName { get; set; }
+            public string UnitCode { get; set; }
+            public string UnitName { get; set; }
+            public string SubUnitCode { get; set; }
+            public string SubUnitName { get; set; }
         }
-       
+
 
         public class Handler : IRequestHandler<SLAReportQuery, PagedList<SLAReportResult>>
         {
@@ -90,7 +105,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                         ServiceProviderId = o.RequestConcern.ServiceProviderId,
                         ChannelId = o.RequestConcern.ChannelId,
                         AssignTo = o.AssignTo,
-
+                        RequestedAt = o.CreatedAt,
+                        CompanyCode = o.RequestConcern.OneChargingMIS.company_code,
+                        CompanyName = o.RequestConcern.OneChargingMIS.company_name,
+                        LocationCode = o.RequestConcern.OneChargingMIS.location_code,
+                        LocationName = o.RequestConcern.OneChargingMIS.location_name,
+                        DeparmentCode = o.RequestConcern.OneChargingMIS.department_code,
+                        DepartmentName = o.RequestConcern.OneChargingMIS.department_name,
+                        BusinessUnitCode = o.RequestConcern.OneChargingMIS.business_unit_code,
+                        BusinessUnitName = o.RequestConcern.OneChargingMIS.business_unit_name,
+                        UnitCode = o.RequestConcern.OneChargingMIS.department_unit_code,
+                        UnitName = o.RequestConcern.OneChargingMIS.department_unit_name,
+                        SubUnitCode = o.RequestConcern.OneChargingMIS.sub_unit_code,
+                        SubUnitName = o.RequestConcern.OneChargingMIS.sub_unit_name,
 
 
 
@@ -118,7 +145,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                         Solution = ct.TicketConcern.RequestConcern.Resolution,
                         RequestType = ct.TicketConcern.RequestConcern.RequestType,
                         Status = ct.TicketConcern.RequestConcern.ConcernStatus,
-                        Rating = ct.TicketConcern.TargetDate.Value.Date >= ct.TicketConcern.Closed_At .Value.Date ? "On Time" : "Delay",
+                        Rating = ct.TicketConcern.TargetDate.Value.Date >= ct.TicketConcern.Closed_At.Value.Date ? "On Time" : "Delay",
                         Category = string.Join(", ", ct.TicketConcern.RequestConcern.TicketCategories.Select(rc => rc.Category.CategoryDescription)),
                         SubCategory = string.Join(", ", ct.TicketConcern.RequestConcern.TicketSubCategories.Select(rc => rc.SubCategory.SubCategoryDescription)),
                         Position = "",
@@ -126,10 +153,62 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                         ChannelId = ct.TicketConcern.RequestConcern.ChannelId,
                         AssignTo = ct.TicketConcern.AssignTo,
                         ForClosingDate = ct.ForClosingAt,
+                        RequestedAt = ct.TicketConcern.CreatedAt,
+                        Remarks = ct.TicketConcern.TargetDate.Value.Date >= ct.ForClosingAt.Value.Date ? "On Time" : "Delay",
+                        CompanyCode = ct.TicketConcern.RequestConcern.OneChargingMIS.company_code,
+                        CompanyName = ct.TicketConcern.RequestConcern.OneChargingMIS.company_name,
+                        LocationCode = ct.TicketConcern.RequestConcern.OneChargingMIS.location_code,
+                        LocationName = ct.TicketConcern.RequestConcern.OneChargingMIS.location_name,
+                        DeparmentCode = ct.TicketConcern.RequestConcern.OneChargingMIS.department_code,
+                        DepartmentName = ct.TicketConcern.RequestConcern.OneChargingMIS.department_name,
+                        BusinessUnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.business_unit_code,
+                        BusinessUnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.business_unit_name,
+                        UnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.department_unit_code,
+                        UnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.department_unit_name,
+                        SubUnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_code,
+                        SubUnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_name,
                     }).ToListAsync();
 
 
+                var onHoldTicketQuery = await _context.TicketOnHolds
+                    .AsNoTrackingWithIdentityResolution()
+                    .Include(c => c.TicketConcern)
+                    .ThenInclude(c => c.RequestConcern)
+                    .AsSplitQuery()
+                    .Where(x => x.IsHold == true && x.IsActive == true)
+                    .Where(t => t.TicketConcern.CreatedAt.Date >= request.Date_From.Value.Date && t.TicketConcern.CreatedAt.Date <= request.Date_To.Value.Date)
+                    .Select(ct => new SLAReportResult
+                    {
+                        Year = ct.TicketConcern.DateApprovedAt.Value.ToString("yyyy"),
+                        Month = ct.TicketConcern.DateApprovedAt.Value.ToString("MMMM"),
+                        TicketNo = ct.TicketConcernId,
+                        Assign = ct.TicketConcern.User.Fullname,
+                        Store = ct.TicketConcern.RequestorByUser.Fullname,
+                        Description = ct.TicketConcern.RequestConcern.Concern,
+                        OpenDate = ct.TicketConcern.DateApprovedAt,
+                        TargetDate = ct.TicketConcern.TargetDate,
+                        Solution = ct.TicketConcern.RequestConcern.Resolution,
+                        RequestType = ct.TicketConcern.RequestConcern.RequestType,
+                        Status = ct.TicketConcern.RequestConcern.ConcernStatus,
+                        Category = string.Join(", ", ct.TicketConcern.RequestConcern.TicketCategories.Select(rc => rc.Category.CategoryDescription)),
+                        SubCategory = string.Join(", ", ct.TicketConcern.RequestConcern.TicketSubCategories.Select(rc => rc.SubCategory.SubCategoryDescription)),
+                        ServiceProviderId = ct.TicketConcern.RequestConcern.ServiceProviderId,
+                        ChannelId = ct.TicketConcern.RequestConcern.ChannelId,
+                        AssignTo = ct.TicketConcern.AssignTo,
+                        CompanyCode = ct.TicketConcern.RequestConcern.OneChargingMIS.company_code,
+                        CompanyName = ct.TicketConcern.RequestConcern.OneChargingMIS.company_name,
+                        LocationCode = ct.TicketConcern.RequestConcern.OneChargingMIS.location_code,
+                        LocationName = ct.TicketConcern.RequestConcern.OneChargingMIS.location_name,
+                        DeparmentCode = ct.TicketConcern.RequestConcern.OneChargingMIS.department_code,
+                        DepartmentName = ct.TicketConcern.RequestConcern.OneChargingMIS.department_name,
+                        BusinessUnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.business_unit_code,
+                        BusinessUnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.business_unit_name,
+                        UnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.department_unit_code,
+                        UnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.department_unit_name,
+                        SubUnitCode = ct.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_code,
+                        SubUnitName = ct.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_name,
 
+                    }).ToListAsync();
 
                 if (request.ServiceProvider is not null)
                 {
@@ -140,6 +219,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
 
 
                     closingTicketQuery = closingTicketQuery
+                       .Where(x => x.ServiceProviderId == request.ServiceProvider)
+                    .ToList();
+
+                    onHoldTicketQuery = onHoldTicketQuery
                        .Where(x => x.ServiceProviderId == request.ServiceProvider)
                     .ToList();
 
@@ -155,7 +238,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                            .Where(x => x.ChannelId == request.Channel)
                            .ToList();
 
-
+                        onHoldTicketQuery = onHoldTicketQuery
+                           .Where(x => x.ChannelId == request.Channel)
+                           .ToList();
 
                         if (request.UserId is not null)
                         {
@@ -164,6 +249,10 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                             .ToList();
 
                             closingTicketQuery = closingTicketQuery
+                                    .Where(x => x.AssignTo == request.UserId)
+                                .ToList();
+
+                            onHoldTicketQuery = onHoldTicketQuery
                                     .Where(x => x.AssignTo == request.UserId)
                                 .ToList();
                         }
@@ -211,30 +300,136 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport
                     combineTicketReports.Add(list);
                 }
 
-                var results = combineTicketReports
-                    .OrderBy(x => x.OpenDate.Value.Date)
-                    .ThenBy(x => x.TicketNo)
-                    .Select(r => new SLAReportResult
-                    {
-                        Year = r.Year,
-                        Month = r.Month,
-                        TicketNo = r.TicketNo,
-                        Assign = r.Assign,
-                        Store = r.Store,
-                        Description = r.Description,
-                        OpenDate = r.OpenDate,
-                        TargetDate  = r.TargetDate,
-                        ForClosingDate = r.ForClosingDate,
-                        ClosedDate = r.ClosedDate,
-                        Solution = r.Solution,
-                        RequestType = r.RequestType,
-                        Status = r.Status,
-                        Rating = r.Rating,
-                        Category = r.Category,
-                        SubCategory = r.SubCategory,
-                        Position = r.Position,
-                    }).AsQueryable();
-                return PagedList<SLAReportResult>.Create(results, request.PageNumber, request.PageSize);
+                var invalidChannel = combineTicketReports
+                        .Select(r => new SLAReportResult
+                        {
+                        }).AsQueryable();
+                if (request.Channel == 3)
+                {
+                    var results = combineTicketReports
+                        .OrderBy(x => x.OpenDate.Value.Date)
+                        .ThenBy(x => x.TicketNo)
+                        .Select(r => new SLAReportResult
+                        {
+                            Year = r.Year,
+                            Month = r.Month,
+                            TicketNo = r.TicketNo,
+                            Assign = r.Assign,
+                            Store = r.Store,
+                            Description = r.Description,
+                            OpenDate = r.OpenDate,
+                            TargetDate = r.TargetDate,
+                            ForClosingDate = r.ForClosingDate,
+                            ClosedDate = r.ClosedDate,
+                            Solution = r.Solution,
+                            RequestType = r.RequestType,
+                            Status = r.Status,
+                            Rating = r.Rating,
+                            Category = r.Category,
+                            SubCategory = r.SubCategory,
+                            Position = r.Position,
+                            RequestedAt = r.RequestedAt,
+                            //Remarks = r.Remarks,
+                            //CompanyCode = r.CompanyCode,
+                            //CompanyName = r.CompanyName,
+                            //LocationCode = r.LocationCode,
+                            //LocationName = r.LocationName,
+                            //DeparmentCode = r.DeparmentCode,
+                            //DepartmentName = r.DepartmentName,
+                            //BusinessUnitCode = r.BusinessUnitCode,
+                            //BusinessUnitName = r.BusinessUnitName,
+                            //UnitCode = r.UnitCode,
+                            //UnitName = r.UnitName,
+                            //SubUnitCode = r.UnitName,
+                            //SubUnitName = r.UnitName,
+                        }).AsQueryable();
+                    return PagedList<SLAReportResult>.Create(results, request.PageNumber, request.PageSize);
+                }
+
+                if (request.Channel == 8)
+                {
+                    var results = combineTicketReports
+                        .OrderBy(x => x.OpenDate.Value.Date)
+                        .ThenBy(x => x.TicketNo)
+                        .Select(r => new SLAReportResult
+                        {
+                            Year = r.Year,
+                            Month = r.Month,
+                            TicketNo = r.TicketNo,
+                            Assign = r.Assign,
+                            //Store = r.Store,
+                            Description = r.Description,
+                            OpenDate = r.OpenDate,
+                            TargetDate = r.TargetDate,
+                            ForClosingDate = r.ForClosingDate,
+                            //ClosedDate = r.ClosedDate,
+                            Solution = r.Solution,
+                            //RequestType = r.RequestType,
+                            //Status = r.Status,
+                            //Rating = r.Rating,
+                            Category = r.Category,
+                            //SubCategory = r.SubCategory,
+                            Position = r.Position,
+                            RequestedAt = r.RequestedAt,
+                            Remarks = r.Remarks,
+                            //CompanyCode = r.CompanyCode,
+                            //CompanyName = r.CompanyName,
+                            //LocationCode = r.LocationCode,
+                            //LocationName = r.LocationName,
+                            //DeparmentCode = r.DeparmentCode,
+                            //DepartmentName = r.DepartmentName,
+                            //BusinessUnitCode = r.BusinessUnitCode,
+                            //BusinessUnitName = r.BusinessUnitName,
+                            //UnitCode = r.UnitCode,
+                            //UnitName = r.UnitName,
+                            //SubUnitCode = r.UnitName,
+                            //SubUnitName = r.UnitName,
+                        }).AsQueryable();
+                    return PagedList<SLAReportResult>.Create(results, request.PageNumber, request.PageSize);
+                }
+
+                if (request.Channel == 6)
+                {
+                    var results = combineTicketReports
+                        .OrderBy(x => x.OpenDate.Value.Date)
+                        .ThenBy(x => x.TicketNo)
+                        .Select(r => new SLAReportResult
+                        {
+                            Year = r.Year,
+                            Month = r.Month,
+                            TicketNo = r.TicketNo,
+                            Assign = r.Assign,
+                            //Store = r.Store,
+                            Description = r.Description,
+                            OpenDate = r.OpenDate,
+                            TargetDate = r.TargetDate,
+                            ForClosingDate = r.ForClosingDate,
+                            ClosedDate = r.ClosedDate,
+                            Solution = r.Solution,
+                            //RequestType = r.RequestType,
+                            //Status = r.Status,
+                            Rating = r.Rating,
+                            Category = r.Category,
+                            SubCategory = r.SubCategory,
+                            Position = r.Position,
+                            RequestedAt = r.RequestedAt,
+                            //Remarks = r.Remarks,
+                            CompanyCode = r.CompanyCode,
+                            CompanyName = r.CompanyName,
+                            LocationCode = r.LocationCode,
+                            LocationName = r.LocationName,
+                            DeparmentCode = r.DeparmentCode,
+                            DepartmentName = r.DepartmentName,
+                            BusinessUnitCode = r.BusinessUnitCode,
+                            BusinessUnitName = r.BusinessUnitName,
+                            UnitCode = r.UnitCode,
+                            UnitName = r.UnitName,
+                            SubUnitCode = r.UnitName,
+                            SubUnitName = r.UnitName,
+                        }).AsQueryable();
+                    return PagedList<SLAReportResult>.Create(results, request.PageNumber, request.PageSize);
+                }
+                return PagedList<SLAReportResult>.Create(invalidChannel, request.PageNumber, request.PageSize);
             }
         }
 

@@ -423,6 +423,404 @@ namespace MakeItSimple.WebApi.Migrations
                     b.ToTable("one_units", (string)null);
                 });
 
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.OneCharging.PendingRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("IdNo")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("id_no");
+
+                    b.Property<string>("IdPrefix")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("id_prefix");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("middle_name");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("password");
+
+                    b.Property<string>("Suffix")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("suffix");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pending_requests");
+
+                    b.ToTable("pending_requests", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsChecklistManagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pms_checklist_managements");
+
+                    b.ToTable("pms_checklist_managements", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("added_by");
+
+                    b.Property<string>("ChargingCode")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("charging_code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool?>("IsCanceled")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_canceled");
+
+                    b.Property<bool?>("IsCompleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_completed");
+
+                    b.Property<int?>("PmsTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("pms_type_id");
+
+                    b.Property<Guid?>("RequestorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("requestor_id");
+
+                    b.Property<DateTime?>("ScheduleDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("schedule_date");
+
+                    b.Property<int?>("SiteId")
+                        .HasColumnType("int")
+                        .HasColumnName("site_id");
+
+                    b.Property<DateTime?>("TimeIn")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("time_in");
+
+                    b.Property<DateTime?>("TimeOut")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("time_out");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pmss");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_pmss_added_by");
+
+                    b.HasIndex("ChargingCode")
+                        .HasDatabaseName("ix_pmss_charging_code");
+
+                    b.HasIndex("PmsTypeId")
+                        .HasDatabaseName("ix_pmss_pms_type_id");
+
+                    b.HasIndex("RequestorId")
+                        .HasDatabaseName("ix_pmss_requestor_id");
+
+                    b.HasIndex("SiteId")
+                        .HasDatabaseName("ix_pmss_site_id");
+
+                    b.ToTable("pmss", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("added_by");
+
+                    b.Property<string>("AssetTag")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("asset_tag");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Paragraph")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("paragraph");
+
+                    b.Property<int?>("PmsId")
+                        .HasColumnType("int")
+                        .HasColumnName("pms_id");
+
+                    b.Property<string>("RemarksAnswer")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("remarks_answer");
+
+                    b.Property<int?>("SectionQuestionID")
+                        .HasColumnType("int")
+                        .HasColumnName("section_question_id");
+
+                    b.Property<bool?>("StatusAnswer")
+                        .HasColumnType("bit")
+                        .HasColumnName("status_answer");
+
+                    b.Property<string>("Textfield")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("textfield");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pms_answers");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_pms_answers_added_by");
+
+                    b.HasIndex("PmsId")
+                        .HasDatabaseName("ix_pms_answers_pms_id");
+
+                    b.HasIndex("SectionQuestionID")
+                        .HasDatabaseName("ix_pms_answers_section_question_id");
+
+                    b.ToTable("pms_answers", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("added_by");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("PmsType")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("pms_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pms_type");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_pms_type_added_by");
+
+                    b.ToTable("pms_type", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsSectionQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("added_by");
+
+                    b.Property<int?>("ChecklistManagementId")
+                        .HasColumnType("int")
+                        .HasColumnName("checklist_management_id");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool?>("HasAssetTag")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_asset_tag");
+
+                    b.Property<bool?>("HasCheckBox")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_check_box");
+
+                    b.Property<bool?>("HasHeader")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_header");
+
+                    b.Property<bool?>("HasParagraph")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_paragraph");
+
+                    b.Property<bool?>("HasRemarks")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_remarks");
+
+                    b.Property<bool?>("HasTextfield")
+                        .HasColumnType("bit")
+                        .HasColumnName("has_textfield");
+
+                    b.Property<string>("Headers")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("headers");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<int?>("OrderBy")
+                        .HasColumnType("int")
+                        .HasColumnName("order_by");
+
+                    b.Property<int?>("PmsTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("pms_type_id");
+
+                    b.Property<string>("Questions")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("questions");
+
+                    b.Property<string>("Section")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("section");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_pms_section_questions");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_pms_section_questions_added_by");
+
+                    b.HasIndex("ChecklistManagementId")
+                        .HasDatabaseName("ix_pms_section_questions_checklist_management_id");
+
+                    b.HasIndex("PmsTypeId")
+                        .HasDatabaseName("ix_pms_section_questions_pms_type_id");
+
+                    b.HasIndex("UpdatedBy")
+                        .HasDatabaseName("ix_pms_section_questions_updated_by");
+
+                    b.ToTable("pms_section_questions", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.SitePivot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BusinessUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("business_unit_id");
+
+                    b.Property<string>("BusinessUnitName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("business_unit_name");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<int?>("SiteId")
+                        .HasColumnType("int")
+                        .HasColumnName("site_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sites_pivot");
+
+                    b.HasIndex("SiteId")
+                        .HasDatabaseName("ix_sites_pivot_site_id");
+
+                    b.ToTable("sites_pivot", (string)null);
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.Sites", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Site")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("site");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sites");
+
+                    b.ToTable("sites", (string)null);
+                });
+
             modelBuilder.Entity("MakeItSimple.WebApi.Models.PmsDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -3783,6 +4181,126 @@ namespace MakeItSimple.WebApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwo", b =>
+                {
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_pmss_users_added_by_user_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.OneCharging.OneChargingMIS", "OneChargingMIS")
+                        .WithMany()
+                        .HasForeignKey("ChargingCode")
+                        .HasPrincipalKey("code")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_pmss_one_chargings_charging_code");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoType", "PmsType")
+                        .WithMany("Pms")
+                        .HasForeignKey("PmsTypeId")
+                        .HasConstraintName("fk_pmss_pms_type_pms_type_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "Requestor")
+                        .WithMany("PmsPhaseTwo")
+                        .HasForeignKey("RequestorId")
+                        .HasConstraintName("fk_pmss_users_requestor_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.Sites", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .HasConstraintName("fk_pmss_sites_site_id");
+
+                    b.Navigation("AddedByUser");
+
+                    b.Navigation("OneChargingMIS");
+
+                    b.Navigation("PmsType");
+
+                    b.Navigation("Requestor");
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoAnswer", b =>
+                {
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_pms_answers_users_added_by_user_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwo", "Pms")
+                        .WithMany()
+                        .HasForeignKey("PmsId")
+                        .HasConstraintName("fk_pms_answers_pmss_pms_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsSectionQuestion", "SectionQuestion")
+                        .WithMany()
+                        .HasForeignKey("SectionQuestionID")
+                        .HasConstraintName("fk_pms_answers_pms_section_questions_section_question_id");
+
+                    b.Navigation("AddedByUser");
+
+                    b.Navigation("Pms");
+
+                    b.Navigation("SectionQuestion");
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoType", b =>
+                {
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_pms_type_users_added_by_user_id");
+
+                    b.Navigation("AddedByUser");
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsSectionQuestion", b =>
+                {
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_pms_section_questions_users_added_by_user_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsChecklistManagement", "ChecklistManagement")
+                        .WithMany()
+                        .HasForeignKey("ChecklistManagementId")
+                        .HasConstraintName("fk_pms_section_questions_pms_checklist_managements_checklist_management_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoType", "PmsType")
+                        .WithMany("SectionQuestions")
+                        .HasForeignKey("PmsTypeId")
+                        .HasConstraintName("fk_pms_section_questions_pms_type_pms_type_id");
+
+                    b.HasOne("MakeItSimple.WebApi.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_pms_section_questions_users_updated_by_user_id");
+
+                    b.Navigation("AddedByUser");
+
+                    b.Navigation("ChecklistManagement");
+
+                    b.Navigation("PmsType");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.SitePivot", b =>
+                {
+                    b.HasOne("MakeItSimple.WebApi.Models.Phase_Two.PMS.Sites", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .HasConstraintName("fk_sites_pivot_sites_site_id");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("MakeItSimple.WebApi.Models.PmsDetail", b =>
                 {
                     b.HasOne("MakeItSimple.WebApi.Models.Setup.FormSetup.Pms", "Pms")
@@ -4879,7 +5397,7 @@ namespace MakeItSimple.WebApi.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_ticket_attachments_users_added_by_user_id");
 
-                    b.HasOne("MakeItSimple.WebApi.Models.Ticketing.ApproverDate", null)
+                    b.HasOne("MakeItSimple.WebApi.Models.Ticketing.ApproverDate", "ApproverDate")
                         .WithMany("TicketAttachments")
                         .HasForeignKey("ApproverDateId")
                         .HasConstraintName("fk_ticket_attachments_approver_dates_approver_date_id");
@@ -4911,6 +5429,8 @@ namespace MakeItSimple.WebApi.Migrations
                         .HasConstraintName("fk_ticket_attachments_transfer_ticket_concerns_transfer_ticket_concern_id");
 
                     b.Navigation("AddedByUser");
+
+                    b.Navigation("ApproverDate");
 
                     b.Navigation("ModifiedByUser");
 
@@ -5293,6 +5813,13 @@ namespace MakeItSimple.WebApi.Migrations
                     b.Navigation("ModifiedByUser");
                 });
 
+            modelBuilder.Entity("MakeItSimple.WebApi.Models.Phase_Two.PMS.PmsPhaseTwoType", b =>
+                {
+                    b.Navigation("Pms");
+
+                    b.Navigation("SectionQuestions");
+                });
+
             modelBuilder.Entity("MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup.BusinessUnit", b =>
                 {
                     b.Navigation("Departments");
@@ -5466,6 +5993,8 @@ namespace MakeItSimple.WebApi.Migrations
                     b.Navigation("Channels");
 
                     b.Navigation("IssueHandlerUsers");
+
+                    b.Navigation("PmsPhaseTwo");
 
                     b.Navigation("Receivers");
 

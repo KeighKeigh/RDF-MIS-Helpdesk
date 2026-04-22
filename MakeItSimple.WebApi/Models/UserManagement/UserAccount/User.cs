@@ -1,4 +1,5 @@
 ﻿using MakeItSimple.WebApi.Models.OneCharging;
+using MakeItSimple.WebApi.Models.Phase_Two.PMS;
 using MakeItSimple.WebApi.Models.Setup.ApproverSetup;
 using MakeItSimple.WebApi.Models.Setup.BusinessUnitSetup;
 using MakeItSimple.WebApi.Models.Setup.ChannelSetup;
@@ -76,7 +77,7 @@ namespace MakeItSimple.WebApi.Models
         public ICollection<Receiver> Receivers { get; set; }
         public ICollection<ApproverUser> ApproverUsers { get; set; }
         public ICollection<ApproverUser> IssueHandlerUsers { get; set; }
-
+        public ICollection<PmsPhaseTwo> PmsPhaseTwo { get; set; }
 
 
 

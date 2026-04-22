@@ -43,14 +43,12 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.UserManagement.UserA
                 }
 
                 User.Password = BCrypt.Net.BCrypt.HashPassword(User.Username);
-                User.IsPasswordChange = null;
 
                 await _context.SaveChangesAsync(cancellationToken);
 
                 var results = new UserResetPasswordResult
                 {
                     Id = User.Id,
-                    IsPasswordChange = User.IsPasswordChange
                 };
 
                 return Result.Success(results);

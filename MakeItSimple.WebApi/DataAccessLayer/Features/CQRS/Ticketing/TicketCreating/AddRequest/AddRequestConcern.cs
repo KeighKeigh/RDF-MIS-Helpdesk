@@ -11,12 +11,16 @@ using MakeItSimple.WebApi.DataAccessLayer.Data.DataContext;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.Ticketing;
 using MakeItSimple.WebApi.DataAccessLayer.Errors.UserManagement.UserAccount;
 using MakeItSimple.WebApi.DataAccessLayer.Unit_Of_Work;
+using MakeItSimple.WebApi.Hubs;
+
 //using MakeItSimple.WebApi.Hubs;
 using MakeItSimple.WebApi.Models;
 using MakeItSimple.WebApi.Models.Setup.LocationSetup;
 using MakeItSimple.WebApi.Models.Ticketing;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.OpenTicketConcern.ViewOpenTicket.GetOpenTicket.GetOpenTicketResult.GetForClosingTicket;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.AddRequest.AddRequestConcern.AddRequestConcernCommand;
@@ -32,17 +36,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             public string RequestorDepartment { get; set; }
             public string ChannelName { get; set; }
             public string Concern { get; set; }
+            public DateTime? RequestedDate { get; set; }
         }
         public class Handler : IRequestHandler<AddRequestConcernCommand, Result>
         {
             private readonly IUnitOfWork unitOfWork;
             //private readonly IHubCaller hubCaller;
             private readonly MisDbContext context;
-
-            public Handler(IUnitOfWork unitOfWork, MisDbContext context)
+            private readonly IHubContext<TicketHub> _hubContext;
+            public Handler(IUnitOfWork unitOfWork, MisDbContext context, IHubContext<TicketHub> hubContext)
             {
                 this.unitOfWork = unitOfWork;
                 this.context = context;
+                this._hubContext = hubContext;
 
             }
 
@@ -50,6 +56,11 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
             {
                 var oneTicket = 0;
                 var requestorData = new returnRequest();
+                //var requestorData =
+
+                var requestorDetails = await unitOfWork.User
+                             .UserExist(command.UserId);
+
                 if (command.AssignTo == null)
                 {
                     var ticketConcernId = new int(); //????kkkk
@@ -164,7 +175,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                                 RequestorName = addTicketConcern.RequestorByUser.Fullname,
                                 RequestorDepartment = userDepartment.department_name,
                                 ChannelName = channelName,
-                                Concern = addRequestConcern.Concern
+                                Concern = addRequestConcern.Concern,
+                                RequestedDate = addRequestConcern.CreatedAt,
+                                
                             };
                             oneTicket = 1;
                         }
@@ -453,8 +466,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         //}
 
 
-                        var requestorDetails = await unitOfWork.User
-                             .UserExist(command.UserId);
+                        
 
                         var addRequestConcern = new RequestConcern
                         {
@@ -488,6 +500,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                         await unitOfWork.SaveChangesAsync(cancellationToken);
 
                         requestConcernId = addRequestConcern.Id;
+
+
 
                         var handlerIds = await context.ApproverUsers.Where(x => x.UserId == addRequestConcern.AssignTo).FirstOrDefaultAsync();
                         var addTicketConcern = new TicketConcern
@@ -528,17 +542,19 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
 
                         ticketConcernExist = addTicketConcern;
 
-                    //    var approverList = await unitOfWork.RequestTicket
-                    //.ApproverBySubUnitList(addTicketConcern.User.SubUnitId);
+                        
 
-                    //    if (!approverList.Any())
-                    //        return Result.Failure(ClosingTicketError.NoApproverHasSetup());
+                        //    var approverList = await unitOfWork.RequestTicket
+                        //.ApproverBySubUnitList(addTicketConcern.User.SubUnitId);
 
-                    //    if (!approverList.Any())
-                    //        return Result.Failure(ClosingTicketError.NoApproverHasSetup());
+                        //    if (!approverList.Any())
+                        //        return Result.Failure(ClosingTicketError.NoApproverHasSetup());
 
-                    //    var approverUser = approverList
-                    //.First(x => x.ApproverLevel == approverList.Min(x => x.ApproverLevel));
+                        //    if (!approverList.Any())
+                        //        return Result.Failure(ClosingTicketError.NoApproverHasSetup());
+
+                        //    var approverUser = approverList
+                        //.First(x => x.ApproverLevel == approverList.Min(x => x.ApproverLevel));
 
 
                         //var handlerId = await context.Approvers.Where(x => x.SubUnitId == addTicketConcern.User.SubUnitId).FirstOrDefaultAsync();
@@ -624,8 +640,8 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                             var approveTicketDateHistory = new TicketHistory
                             {
                                 TicketConcernId = ticketConcernExist.Id,
-                                TransactedBy = handlerIds.UserId,
-                                TransactionDate = DateTime.Now,
+                                TransactedBy = handlerIds.ApproverId,
+                                TransactionDate = null,
                                 Request = TicketingConString.ForApprovalTicket,
                                 Status = $"{TicketingConString.ForApprovalDate}"
                             };
@@ -820,6 +836,103 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.TicketCreating.
                 }
 
                 await unitOfWork.SaveChangesAsync(cancellationToken);
+
+                if (command.AssignTo != null && command.ChannelId == 2)
+                {
+
+                    var totalOpenTickets = await context.TicketConcerns.AsNoTracking()
+                        .Where(x => x.ConcernStatus == TicketingConString.OnGoing && x.AssignTo != null
+                        && x.RequestConcern.IsDone != true && x.OnHold != true
+                        && x.RequestConcern.ChannelId == 2)
+                        .Select(x => new
+                        {
+                            TicketConcernId = x.Id,
+                            EmpId = x.User.EmpId,
+                            IssueHandler = x.User.Fullname,
+                            TargetDate = x.TargetDate,
+                            ClosedDate = x.Closed_At,
+                        }).ToListAsync(cancellationToken);
+
+
+                    var totalClosingTickets = await context.ClosingTickets.AsNoTracking()
+                        .Where(x => x.IsClosing == true
+                        && x.TicketConcern.RequestConcern.ChannelId == 2)
+                        .Select(x => new
+                        {
+                            TicketConcernId = x.TicketConcernId,
+                            EmpId = x.AddedByUser.EmpId,
+                            IssueHandler = x.AddedByUser.Fullname,
+                            TargetDate = x.TicketConcern.TargetDate,
+                            ClosedDate = x.ClosingAt,
+                        }).ToListAsync(cancellationToken);
+
+                    var delayedTickets = totalClosingTickets.Where(x => x.ClosedDate.Value.Date > x.TargetDate.Value.Date).ToList();
+                    var delayedOpenTickets = totalOpenTickets.Where(x => x.TargetDate < DateTime.Today).ToList();
+
+                    var allDelayedTickets = delayedTickets
+                        .Concat(delayedOpenTickets)
+                        .ToList();
+
+                    var onTimeTickets = totalClosingTickets.Where(x => x.ClosedDate.Value.Date <= x.TargetDate).ToList();
+
+                    var openTicketCount = totalOpenTickets.Count();
+                    var closedTicketCount = totalClosingTickets.Count();
+                    var delayedTicketCount = allDelayedTickets.Count();
+                    var onTimeTicketCount = onTimeTickets.Count();
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ReceiveClosingTicketCounts", new
+                    {
+                        TotalClosingTickets = closedTicketCount,
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ReceiveOpenTicketCounts", new
+                    {
+                        TotalOpenTickets = openTicketCount,
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ReceiveDelayedTicketCounts", new
+                    {
+                        DelayedTickets = delayedTicketCount,
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ReceiveOnTimeTicketCounts", new
+                    {
+                        OnTimeTickets = onTimeTicketCount,
+
+                    });
+
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ListOfOpenTickets", new
+                    {
+                        OpenTicketList = totalOpenTickets,
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ListOfClosedTickets", new
+                    {
+                        ClosedTicketList = totalClosingTickets,
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ListOfDelayedTickets", new
+                    {
+                        DelayedTicketList = allDelayedTickets,
+
+
+                    });
+
+                    await _hubContext.Clients.Group("Admins").SendAsync("ListOfOnTimeTickets", new
+                    {
+                        OnTimeTicketlist = onTimeTickets,
+
+
+                    });
+                }
+
+
                 return Result.Success(requestorData);
             }
 

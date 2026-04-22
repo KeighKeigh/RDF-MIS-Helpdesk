@@ -145,25 +145,20 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.ClosedTick
 
                 await unitOfWork.RequestTicket.CreateTicketHistory(addTicketHistory, cancellationToken);
 
-                //foreach (var approver in approverList)
-                //{
-                    //var approverLevel = approver.ApproverLevel == 1 ? $"{approver.ApproverLevel}st"
-                    //       : approver.ApproverLevel == 2 ? $"{approver.ApproverLevel}nd"
-                    //       : approver.ApproverLevel == 3 ? $"{approver.ApproverLevel}rd"
-                    //       : $"{approver.ApproverLevel}th";
+               
 
-                    var addApproverHistory = new TicketHistory
-                    {
-                        TicketConcernId = ticketConcernExist.Id,
-                        TransactedBy = approver.ApproverId,
-                        TransactionDate = DateTime.Now,
-                        Request = TicketingConString.Approval,
-                        Status = $"{TicketingConString.CloseForApproval}",
-                    };
+                var addApproverHistory = new TicketHistory
+                {
+                    TicketConcernId = ticketConcernExist.Id,
+                    TransactedBy = approver.ApproverId,
+                    TransactionDate = null,
+                    Request = TicketingConString.Approval,
+                    Status = $"{TicketingConString.CloseForApproval}",
+                };
 
-                    await unitOfWork.RequestTicket.CreateTicketHistory(addApproverHistory, cancellationToken);
+                await unitOfWork.RequestTicket.CreateTicketHistory(addApproverHistory, cancellationToken);
 
-                //}
+                
 
                 //var businessUnitList = await unitOfWork.BusinessUnit
                 //         .BusinessUnitExist(ticketConcernExist.User.BusinessUnitId);
@@ -175,7 +170,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.ClosedTick
                 {
                     TicketConcernId = ticketConcernExist.Id,
                     TransactedBy = closingTicketExist.TicketConcern.RequestorBy,
-                    TransactionDate = DateTime.Now,
+                    TransactionDate = null,
                     Request = TicketingConString.NotConfirm,
                     Status = $"{TicketingConString.CloseForConfirmation} {ticketConcernExist.RequestorByUser.Fullname}",
                 };

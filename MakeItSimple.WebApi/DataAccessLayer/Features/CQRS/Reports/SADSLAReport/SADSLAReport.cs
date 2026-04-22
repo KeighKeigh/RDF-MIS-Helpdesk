@@ -29,6 +29,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.SADSLAReport
             public string ActualDate { get; set; }
             public string Remarks { get; set; }
             public string Solution { get; set; }
+            public DateTime? RequestedAt { get; set; }
         }
 
 
@@ -62,7 +63,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.SADSLAReport
                         ActualDate = o.Closed_At.ToString(),
                         Remarks = o.TargetDate.Value.Date >= dateToday.Date ? "On Time" : "Delay",
                         Solution = o.RequestConcern.Resolution,
-
+                        RequestedAt = o.CreatedAt,
 
 
 
@@ -87,6 +88,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.SADSLAReport
                         ActualDate = ct.ForClosingAt.Value.ToString("MM/dd/yyyy hh:tt:mm"),
                         Remarks = ct.TicketConcern.TargetDate.Value.Date >= ct.ForClosingAt.Value.Date ? "On Time" : "Delay",
                         Solution = ct.TicketConcern.RequestConcern.Resolution,
+                        RequestedAt = ct.TicketConcern.CreatedAt,
 
                     }).ToListAsync();
 
@@ -139,6 +141,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Reports.SADSLAReport
                         ActualDate = r.ActualDate,
                         Remarks = r.Remarks,
                         Solution = r.Solution,
+                        RequestedAt = r.RequestedAt
                         
                     }).AsQueryable();
                 return PagedList<SADSLAReportResult>.Create(results, request.PageNumber, request.PageSize);

@@ -33,7 +33,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.OnHoldTick
             public Guid? UserId { get; set; }
             public string Fullname { get; set; }
             public string TicketStatus { get; set; }
-
+            public DateTime? RequestedAt { get; set; }
             public string Reason { get; set; }
             public List<GetOnHoldApproverCategory> GetOnHoldApproverCategories { get; set; }
 
@@ -182,6 +182,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Ticketing.OnHoldTick
                         UserId = x.AddedBy,
                         Fullname = x.AddedByUser.Fullname,
                         Reason = x.Reason,
+                        RequestedAt = x.TicketConcern.CreatedAt,
                         TicketStatus = TicketingConString.OnHold,
                         GetOnHoldApproverCategories = x.TicketConcern.RequestConcern.TicketCategories
                         .Select(t => new GetOnHoldApproverResult.GetOnHoldApproverCategory

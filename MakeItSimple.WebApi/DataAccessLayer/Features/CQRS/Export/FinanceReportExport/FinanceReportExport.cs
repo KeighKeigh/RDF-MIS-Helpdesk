@@ -46,6 +46,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.FinanceReport
             public string UnitName { get; set; }
             public string SubUnitCode { get; set; }
             public string SubUnitName { get; set; }
+            public string Year { get; set; }
             public int Month { get; set; }
             public int? ServiceProviderId { get; set; }
             public int? ChannelId { get; set; }
@@ -91,6 +92,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.FinanceReport
                         UnitName = x.TicketConcern.RequestConcern.OneChargingMIS.department_unit_name,
                         SubUnitCode = x.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_code,
                         SubUnitName = x.TicketConcern.RequestConcern.OneChargingMIS.sub_unit_name,
+                        Year = x.TicketConcern.CreatedAt.Year.ToString(),
                         Month = x.TicketConcern.Closed_At.Value.Month,
                         ServiceProviderId = x.TicketConcern.RequestConcern.ServiceProviderId,
                         ChannelId = x.TicketConcern.RequestConcern.ChannelId,
@@ -143,6 +145,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.FinanceReport
                     UnitName = x.UnitName,
                     SubUnitCode = x.SubUnitCode,
                     SubUnitName = x.SubUnitName,
+                    Year = x.Year,
                     Month = x.Month
                 }).OrderBy(x => x.TicketNumber).ToListAsync();
 
@@ -185,7 +188,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.FinanceReport
                     {
                         var row = worksheet.Row(index + 1);
 
-                        row.Cell(1).Value = results[index - 1].TicketNumber;
+                        row.Cell(1).Value = $"{results[index - 1].Year} - {results[index - 1].TicketNumber}";
                         row.Cell(2).Value = results[index - 1].AssignTo;
                         row.Cell(3).Value = results[index - 1].Requestor;
                         row.Cell(4).Value = results[index - 1].Description;

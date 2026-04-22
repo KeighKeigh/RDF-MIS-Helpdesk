@@ -32,6 +32,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport
             public string ActualDate { get; set; }
             public string Remarks { get; set; }
             public string Solution { get; set; }
+            public string Year { get; set; }
         }
 
         public class Handler : IRequestHandler<SADSLATicketExportCommand, Unit>
@@ -65,6 +66,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport
                         ActualDate = o.Closed_At.ToString(),
                         Remarks = o.TargetDate.Value.Date >= dateToday.Date ? "On Time" : "Delay",
                         Solution = o.RequestConcern.Resolution,
+                        Year = o.CreatedAt.Year.ToString()
 
                     }).ToListAsync();
 
@@ -87,6 +89,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport
                         ActualDate = ct.ForClosingAt.Value.ToString("MM/dd/yyyy hh:mm:tt"),
                         Remarks = ct.TicketConcern.TargetDate.Value.Date >= ct.ForClosingAt.Value.Date ? "On Time" : "Delay",
                         Solution = ct.TicketConcern.RequestConcern.Resolution,
+                        Year = ct.TicketConcern.CreatedAt.Year.ToString()
 
                     }).ToListAsync();
 
@@ -119,6 +122,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport
                         ActualDate = r.ActualDate,
                         Remarks = r.Remarks,
                         Solution = r.Solution,
+                        Year = r.Year,
 
                     }).ToList();
 
@@ -192,7 +196,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport
                     {
                         var row = worksheet.Row(index + 1);
 
-                        row.Cell(1).Value = results[index - 1].TicketNo;
+                        row.Cell(1).Value = $"{results[index - 1].Year} - {results[index - 1].TicketNo}";
                         row.Cell(2).Value = results[index - 1].Assign;
                         row.Cell(3).Value = results[index - 1].Category;
                         row.Cell(4).Value = results[index - 1].Description;

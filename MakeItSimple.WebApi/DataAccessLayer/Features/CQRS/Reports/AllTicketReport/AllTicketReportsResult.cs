@@ -52,7 +52,7 @@
             public string Severity { get; set; }
             public string Technicians { get; set; }
             public string CategoryConcern { get; set; }
-
+            public DateTime? RequestedAt { get; set; }
 
 
 

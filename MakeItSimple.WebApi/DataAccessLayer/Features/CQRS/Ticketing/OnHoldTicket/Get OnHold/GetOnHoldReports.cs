@@ -40,6 +40,7 @@
             public string Reject_OnHold_By { get; set; }
             public string Reject_Remarks { get; set; }
             public string OnHold_Status { get; set; }
+            public DateTime? RequestedAt { get; set; }
 
             public List<OnHoldAttachment> OnHoldAttachments { get; set; }
             public class OnHoldAttachment

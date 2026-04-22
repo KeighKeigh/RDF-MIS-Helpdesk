@@ -8,6 +8,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
         {
             public Guid? UserId { get; set; }
             public int? Unit { get; set; }
+            public string RequestedYear { get; set; }
             public string Year { get; set; }
             public string Month { get; set; }
             public string Start_Date { get; set; }
@@ -35,6 +36,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport
             public string Notes { get; set; }
             public string CreatedAt { get; set; }
             public string ConfirmedAt { get; set; }
+            public string CategoryConcern { get; set; }
 
         }
     }

@@ -77,8 +77,9 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.TransferReport
                         ServiceProviderId = x.TicketConcern.RequestConcern.ServiceProviderId,
                         ServiceProviderName = x.TicketConcern.RequestConcern.ServiceProvider.ServiceProviderName,
                         ChannelId = x.TicketConcern.RequestConcern.ChannelId,
-                        ChannelName = x.TicketConcern.RequestConcern.Channel.ChannelName
-
+                        ChannelName = x.TicketConcern.RequestConcern.Channel.ChannelName,
+                        TransferredDate = x.CreatedAt,
+                        RequestedAt = x.TicketConcern.CreatedAt,
 
 
 

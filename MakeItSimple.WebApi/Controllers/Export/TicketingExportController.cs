@@ -8,6 +8,7 @@ using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.AllTicketE
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.FinanceReportExport.FinanceReportExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SADSLAExport.SADSLATicketExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.SLAExport.SLATicketExport;
+using static MakeItSimple.WebApi.DataAccessLayer.Features.CQRS.Export.TargetDateClosingExport.TargetDateClosingExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Export.ClosingExport.ClosingTicketExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Export.OnHoldExport.OnHoldTicketExport;
 using static MakeItSimple.WebApi.DataAccessLayer.Features.Export.OpenExport.OpenTicketExport;
@@ -58,6 +59,33 @@ namespace MakeItSimple.WebApi.Controllers.Export
         public async Task<IActionResult> ClosingTicketExport([FromQuery] ClosingTicketExportCommand command)
         {
             var filePath = $"ClosingTicketReports {command.Date_From:MM-dd-yyyy} - {command.Date_To:MM-dd-yyyy}.xlsx";
+
+            try
+            {
+                await _mediator.Send(command);
+                var memory = new MemoryStream();
+                await using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+                var result = File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    filePath);
+                System.IO.File.Delete(filePath);
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
+
+        }
+
+        [HttpGet("TargetDateClosingExport")]
+        public async Task<IActionResult> TargetDateClosingExport([FromQuery] TargetDateClosingExportCommand command)
+        {
+            var filePath = $"TargetDateClosingReport {command.Date_From:MM-dd-yyyy} - {command.Date_To:MM-dd-yyyy}.xlsx";
 
             try
             {

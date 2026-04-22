@@ -25,7 +25,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
             public async Task<PagedList<GetClosingTicketResults>> Handle(GetClosingTicketQuery request, CancellationToken cancellationToken)
             {
                 var dateToday = DateTime.Today;
-                var businessUnitList = new List<BusinessUnit>();
+                //var businessUnitList = new List<BusinessUnit>();
 
                 IQueryable<ClosingTicket> closingTicketsQuery = _context.ClosingTickets
                     .AsNoTrackingWithIdentityResolution()
@@ -151,6 +151,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Ticketing.ClosedTicketCon
                         Fullname = x.TicketConcern.User.Fullname,
                         DateNeeded = x.TicketConcern.RequestConcern.DateNeeded,
                         ConcernCategory = x.CategoryConcernName,
+                        RequestedAt = x.TicketConcern.CreatedAt,
                         GetClosingTicketTechnicians = x.ticketTechnicians
                         .Select(t => new GetClosingTicketResults.GetClosingTicketTechnician
                         {

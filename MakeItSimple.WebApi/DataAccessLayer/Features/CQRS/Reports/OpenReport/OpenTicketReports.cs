@@ -73,6 +73,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport
                         ServiceProvider = t.RequestConcern.ServiceProviderId,
                         AssigTo = t.RequestConcern.AssignToUser.Fullname,
                         AssignTo = t.AssignTo,
+                        RequestedAt = t.CreatedAt,
                         
 
                         
@@ -150,6 +151,7 @@ namespace MakeItSimple.WebApi.DataAccessLayer.Features.Reports.OpenReport
                         ChannelId = f.ChannelId,
                         StartDate = f.StartDate,
                         AssigTo = f.AssigTo,
+                        RequestedAt = f.RequestedAt,
 
                     }).AsQueryable();
 

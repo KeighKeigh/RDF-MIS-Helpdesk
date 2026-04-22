@@ -48,6 +48,7 @@
             public string Reject_Remarks { get; set; }
             public string Remarks { get; set; }
             public string Added_By { get; set; }
+            public DateTime RequestedAt { get; set; }
             public DateTime Created_At { get; set; }
             public string Modified_By { get; set; }
             public DateTime? Updated_At { get; set; }
